@@ -9,22 +9,22 @@ def newton_forward_interpolation(x_values, y_values, x_to_interpolate):
     :return: Interpolated y value
     """
     n = len(x_values)
-    h = x_values[1] - x_values[0]  # Assuming equally spaced x values
-    diff_table = [[0] * n for _ in range(n)]
+    h = x_values[1] - x_values[0]  # Height between values
+    diff_table = [[0] * n for _ in range(n)] # Creates n by n table full of 0
 
-    # Fill the first column of the difference table with y values
+    # Filling the first column Δ f(x)
     for i in range(n):
         diff_table[i][0] = y_values[i]
 
-    # Calculate forward differences
+    # Calculate forward differences Δ2 f(x), Δ2 f(x) ....
     for j in range(1, n):
         for i in range(n - j):
-            diff_table[i][j] = diff_table[i + 1][j - 1] - diff_table[i][j - 1]
+            diff_table[i][j] = diff_table[i + 1][j - 1] - diff_table[i][j - 1] # Δ2 f(x1) = Δ f(x2) - Δ f(x)
 
     # Calculate p
-    p = (x_to_interpolate - x_values[0]) / h
+    p = (x_to_interpolate - x_values[0]) / h    # p = (x-x0)/height
 
-    # Apply Newton's formula
+    # Newton's formula
     y_interpolated = y_values[0]
     p_term = 1  # The current p term in the formula: p(p-1)(p-2).../(n!)
     for j in range(1, n):
@@ -53,7 +53,6 @@ def lagrange_interpolation(x_points, y_points, x):
     y = 0
 
     for i in range(n):
-        # Calculate the Lagrange basis polynomial L_i(x)
         L = 1
         for j in range(n):
             if i != j:
@@ -64,44 +63,43 @@ def lagrange_interpolation(x_points, y_points, x):
 
     return y
 
-    def newton_divided_difference(x_points, y_points, x):
-        """
-        Computes the Newton Divided Difference Interpolation for a given value of x.
+def newton_divided_difference(x_points, y_points, x):
+    """"
+    Computes the Newton Divided Difference Interpolation for a given value of x.
 
-        Parameters:
-        - x_points: List of x-coordinates of the data points.
-        - y_points: List of corresponding y-coordinates of the data points.
-        - x: The x-value at which to estimate the interpolated value.
+    Parameters:
+    - x_points: List of x-coordinates of the data points.
+    - y_points: List of corresponding y-coordinates of the data points.
+    - x: The x-value at which to estimate the interpolated value.
 
-        Returns:
-        - Interpolated value of y at the given x.
-        """
-        if len(x_points) != len(y_points):
-            raise ValueError("x_points and y_points must have the same length.")
+    Returns:
+    - Interpolated value of y at the given x.
+    """
+    if len(x_points) != len(y_points):
+        raise ValueError("x_points and y_points must have the same length.")
 
-        n = len(x_points)
+    n = len(x_points) # matrix n x n len
 
-        # Initialize the divided difference table
-        divided_diff = [[0] * n for _ in range(n)]
+    divided_diff = [[0] * n for _ in range(n)] #filling matrix n by n zero
 
-        # Populate the first column with y_points
-        for i in range(n):
-            divided_diff[i][0] = y_points[i]
+    # Populate the first column with y_points
+    for i in range(n):
+        divided_diff[i][0] = y_points[i]
 
-        # Compute the divided differences
-        for j in range(1, n):
-            for i in range(n - j):
-                divided_diff[i][j] = (divided_diff[i + 1][j - 1] - divided_diff[i][j - 1]) / (
-                            x_points[i + j] - x_points[i])
+    # Compute the divided differences
+    for j in range(1, n):
+        for i in range(n - j):
+            divided_diff[i][j] = (divided_diff[i + 1][j - 1] - divided_diff[i][j - 1]) / (
+                        x_points[i + j] - x_points[i])
 
-        # Perform interpolation
-        result = divided_diff[0][0]
-        product = 1
-        for i in range(1, n):
-            product *= (x - x_points[i - 1])
-            result += product * divided_diff[0][i]
+    # Perform interpolation
+    result = divided_diff[0][0]
+    product = 1
+    for i in range(1, n):
+        product *= (x - x_points[i - 1])
+        result += product * divided_diff[0][i]
 
-        return result
+    return result
 
 
 def line():
